@@ -17,8 +17,35 @@ const render = Render.create({
         width : 620,
         height : 850,
 
-    }
+    },
 })
 
+//벽 배치를 위한 world 선언
+const world = engine.world;
+
+const leftWall = Bodies.rectangle(15,395,30,790,{
+    isStatic : true,
+    render:{ fillStyle : '#E6B143'},
+})
+
+const rightWall = Bodies.rectangle(605,395,30,790,{
+    isStatic : true,
+    render:{ fillStyle : '#E6B143'},
+})
+
+const ground = Bodies.rectangle(310,820,620,60,{
+    isStatic : true,
+    render:{ fillStyle : '#E6B143'},
+})
+
+const topLine = Bodies.rectangle(310,150,620,2,{
+    isStatic : true,
+    render:{ fillStyle : '#E6B143'},
+})
+
+//벽 월드에 배치
+
+World.add(world,[leftWall, rightWall, ground,topLine])
+
 Render.run(render)
-Render.run(engine)
+Runner.run(engine)
