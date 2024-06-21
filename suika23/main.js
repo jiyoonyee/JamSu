@@ -1,3 +1,5 @@
+import { FRUITS } from "./fruits.js";
+
 var Engine = Matter.Engine,
     Render = Matter.Render,
     Runner = Matter.Runner,
@@ -40,6 +42,7 @@ const ground = Bodies.rectangle(310,820,620,60,{
 
 const topLine = Bodies.rectangle(310,150,620,2,{
     isStatic : true,
+    isSensor : true, // 충돌은 갑지하는 물리엔진은 감지 안함
     render:{ fillStyle : '#E6B143'},
 })
 
@@ -49,3 +52,32 @@ World.add(world,[leftWall, rightWall, ground,topLine])
 
 Render.run(render)
 Runner.run(engine)
+
+let currentBody = null;
+let currentFruit = null;
+
+function addFruit(){
+
+    // 과일 인덱스값 저장
+    const index = Math.floor(Math.random()*5);
+
+    //과일 이미지 경로 불러오기 변수
+    const fruit = FRUITS[index];
+
+    const body = Bodies.circle(300,50,fruit.radius,{
+        index : index,
+        isSleeping : true, //시작시 바로 떨어지지 않고 잠시 멈춤
+        render : {
+            sprite : { texture : `${fruit.name}.png`},
+        },
+        //통통 튀기는 설정
+        restitution : 1,
+    })
+
+    currentBody = body;
+    currentFruit = fruit;
+
+    World.add(world,body)
+}
+
+addFruit()
