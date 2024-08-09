@@ -7,8 +7,8 @@ var Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     World = Matter.World,
     // 조작을 위해 Body 선언
-    Body = Matter.Body;
-
+    Body = Matter.Body,
+    Events = Matter.Events;
 // 엔진 선언
 const engine = Engine.create();
 
@@ -93,16 +93,22 @@ window.onkeydown = (event) => {
 
     switch(event.code) {
         case "KeyA":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x - 10,
-                y: currentBody.position.y,
-            });
-            break;
+            if(currentBody.position.x - currentFruit.radius > 30){
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x - 10,
+                    y: currentBody.position.y,
+                });
+                break;
+            }
+            
         case "KeyD":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x + 10,
-                y: currentBody.position.y,
-            });
+            if(currentBody.position.x - currentFruit.radius < 560){
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x + 10,
+                    y: currentBody.position.y,
+                });
+            }
+            
             break;
         case "KeyS":
             // isSleeping을 false로 해서 과일을 떨어트림
@@ -117,5 +123,26 @@ window.onkeydown = (event) => {
 
     }
 }
+
+Events.on(engine,"collisionStart",(event)=>{
+    event.pairs.forEach((collision)=>{
+        if(collision.bodyA.index == collision.bodyB.index){
+            const index = collision.bodyA.index;
+            World.remove(world,[collision.bodyA,collision.bodyB])
+            const newFruit = FRUITS[index+1]
+            const newBody = Bodies.circle(
+                collision.collision.supports[0].x,
+                collision.collision.supports[0].y ,
+                newFruit.radius,
+                {
+                    index : index +1,
+                    render : {sprite : { texture : `${newFruit.name}.png`}}
+                }
+            )
+
+            World.add(world,newBody )
+        }
+    })
+})
 
 addFruit();
